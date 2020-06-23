@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .forms import UserLoginForm, UserRegisterForm
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 
 '''
 
@@ -53,5 +56,20 @@ def user_register(request):
         return render(request, 'userprofile/register.html', context)
     else:
         return HttpResponse("请使用GET或POST请求数据")
+
+#用户删除
+@login_required(login_url='/userprofile/login/')
+def user_delete(request, id):
+    if request.method == 'POST':
+        user = User.objects.get(id=id)
+        #验证登录用户、待删除用户是否相同
+        if request.user == user:
+            logout(request)
+            user.delete()
+            return redirect('article:article_list')
+        else:
+            return HttpResponse('没有删除权限')
+    else:
+        return HttpResponse('仅接受POST请求')
 
 
