@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import Profile
+
 
 #forms.Form需要手动配置每个字段，它适用于不与数据库进行直接交互的功能
 class UserLoginForm(forms.Form):
@@ -23,3 +25,8 @@ class UserRegisterForm(forms.ModelForm):
             return data.get('password')
         else:
             raise forms.ValidationError("密码输入不一致,请重试。")
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('phone', 'avatar', 'bio')

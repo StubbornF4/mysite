@@ -33,7 +33,7 @@ def article_create(request):
         #判断数据是否满足模型要求（Django内置方法）
         if article_post_form.is_valid():
             new_article = article_post_form.save(commit=False)
-            new_article.author = User.objects.get(id=1)
+            new_article.author = User.objects.get(id=request.user.id)
             new_article.save()
             return redirect('article:article_list')
         else:
