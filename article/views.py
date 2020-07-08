@@ -2,18 +2,23 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse 
 from .models import ArticlePost
 from .forms import ArticlePostForm
-# 引入User模型
+#引入User模型
 from django.contrib.auth.models import User
-
-
+#引入分页模块
+from django.core.paginator import Paginator
 #使用markdown 对文本进行渲染
 import markdown
 
 #文章列表
 def article_list(request):
-    articles = ArticlePost.objects.all()
-    return render(request,'article/list.html',{'articles':articles})
-
+    article_list = ArticlePost.objects.all()
+    #分页article list 为一页
+    paginator = Paginator(article_list,1)
+    page = request.GET.get('page')
+    #将导航对象相应的内容返回给articles
+    articles = paginator.get_page(page)
+    context = {'articles': articles}
+    return render(request, 'article/list.html', context)
 #文章详情
 def article_detail(request,id):
     article = ArticlePost.objects.get(id=id)
