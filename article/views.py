@@ -10,22 +10,41 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 #使用markdown 对文本进行渲染
 import markdown
+#引入Q对象，用于联合查询
+from django.db.models import Q
 
 #文章列表
 def article_list(request):
-    #根据最新\最热进行排序
-    if request.GET.get('order') == 'total_views':
-        article_list = ArticlePost.objects.all().order_by('-total_views')
-        order = 'total_views'
+    search = request.GET.get('search')
+    order = request.GET.get('order')
+    #是否要搜索内容
+    if search:
+        #根据最新\最热进行排序
+        if order == 'total_views':
+            article_list = ArticlePost.objects.filter(
+                #__两个下划线， icontains不区分大小写
+                Q(title__icontains=search) | 
+                Q(body__icontains=search)
+            ).order_by('-total_views')
+        else:
+            article_list = ArticlePost.objects.filter(
+                Q(title__icontains=search) |
+                Q(body__icontains=search)
+            )
     else:
-        article_list = ArticlePost.objects.all()
-        order = 'normal'
+        #否则会搜索search = NONE
+        search = ''
+        if order == 'total_views':
+            article_list = ArticlePost.objects.all().order_by('-total_views')
+        else:
+            article_list = ArticlePost.objects.all()
+
 
     paginator = Paginator(article_list,1)
     page = request.GET.get('page')
     articles = paginator.get_page(page)
 
-    context = {'articles': articles,'order': order}
+    context = {'articles': articles,'order': order, 'search': search }
 
     return render(request, 'article/list.html', context) 
 
