@@ -13,15 +13,22 @@ import markdown
 
 #文章列表
 def article_list(request):
-    article_list = ArticlePost.objects.all()
-    #分页article list 为一页
+    #根据最新\最热进行排序
+    if request.GET.get('order') == 'total_views':
+        article_list = ArticlePost.objects.all().order_by('-total_views')
+        order = 'total_views'
+    else:
+        article_list = ArticlePost.objects.all()
+        order = 'normal'
+
     paginator = Paginator(article_list,1)
     page = request.GET.get('page')
-    #将导航对象相应的内容返回给articles
     articles = paginator.get_page(page)
-    context = {'articles': articles}
-    return render(request, 'article/list.html', context)
-    
+
+    context = {'articles': articles,'order': order}
+
+    return render(request, 'article/list.html', context) 
+
 #文章详情
 def article_detail(request,id):
     article = ArticlePost.objects.get(id=id)
