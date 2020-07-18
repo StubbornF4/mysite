@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse 
 from .models import ArticlePost
 from .forms import ArticlePostForm
+from django.contrib.auth.decorators import login_required
+
 #引入User模型
 from django.contrib.auth.models import User
 #引入分页模块
@@ -19,9 +21,13 @@ def article_list(request):
     articles = paginator.get_page(page)
     context = {'articles': articles}
     return render(request, 'article/list.html', context)
+    
 #文章详情
 def article_detail(request,id):
     article = ArticlePost.objects.get(id=id)
+    #浏览量控制
+    article.total_views += 1
+    article.save(update_fields=['total_views'])
 
     article.body = markdown.markdown(article.body,
         extensions=[
@@ -47,17 +53,23 @@ def article_create(request):
         article_post_form = ArticlePostForm()
         return render(request,'article/create.html',{ 'article_post_form': article_post_form })
 
+@login_required(login_url='/userprofile/login/')
 def article_safe_delete(request, id):
-    if request.method == 'POST':
-        article = ArticlePost.objects.get(id=id)
+    article = ArticlePost.objects.get(id=id)
+    if request.user != article.author:
+        return HttpResponse('抱歉，您无权删除这篇文章。')
+    if request.method == 'POST':        
         article.delete()
         return redirect("article:article_list")
     else:
         return HttpResponse("ERROR")
 
 #文章修改
+@login_required(login_url='/userprofile/login/')
 def article_update(request, id):
     article = ArticlePost.objects.get(id=id)
+    if request.user != article.author:
+        return HttpResponse('抱歉，您无权修改这篇文章。')
     if request.method == "POST":
         article_post_form = ArticlePostForm(data=request.POST)
         if article_post_form.is_valid():
