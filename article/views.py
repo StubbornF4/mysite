@@ -55,14 +55,21 @@ def article_detail(request,id):
     article.total_views += 1
     article.save(update_fields=['total_views'])
 
-    article.body = markdown.markdown(article.body,
+    md = markdown.Markdown(
         extensions=[
         #缩写表格等扩展
         'markdown.extensions.extra',
         #高亮扩展
         'markdown.extensions.codehilite',
-        ])
-    return render(request,'article/detail.html',{'article':article})
+        #目录扩展
+        'markdown.extensions.toc'
+        ]
+    )
+    article.body = md.convert(article.body)
+
+    context = {'article': article, 'toc': md.toc }
+
+    return render(request,'article/detail.html',context)
 
 def article_create(request):
     if request.method == "POST":

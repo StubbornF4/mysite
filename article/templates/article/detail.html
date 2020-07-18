@@ -14,33 +14,44 @@
 <!-- 文章详情 -->
 <div class="container">
     <div class="row">
-        <!-- 标题及作者 -->
-        <h1 class="col-12 mt-4 mb-4">{{ article.title }}</h1>
-        <div class="col-12 alert alert-success">
-            <div>作者：{{ article.author }}
-                {% if user == article.author%}
-                    <a href="#" onclick="confirm_safe_delete()">删除文章</a>>
-                    <a href="{% url "article:article_update" article.id %}">编辑文章</a>
-                    <!-- 新增一个隐藏的表单,用POST的方式删除文章，防止被攻击 -->
-                    <form 
-                        style="display:none;" 
-                        id="safe_delete"
-                        action="{% url 'article:article_safe_delete' article.id %}" 
-                        method="POST"
-                        >
-                        {% csrf_token %}
-                        <button type="submit">发送</button>
-                    </form>
-                {% endif %}
+
+        <div class="col-9">
+            <!-- 标题及作者 -->
+            <h1 class="col-12 mt-4 mb-4">{{ article.title }}</h1>
+            <div class="col-12 alert alert-success">
+                <div>作者：{{ article.author }}
+                    {% if user == article.author%}
+                        <a href="#" onclick="confirm_safe_delete()">删除文章</a>>
+                        <a href="{% url "article:article_update" article.id %}">编辑文章</a>
+                        <!-- 新增一个隐藏的表单,用POST的方式删除文章，防止被攻击 -->
+                        <form 
+                            style="display:none;" 
+                            id="safe_delete"
+                            action="{% url 'article:article_safe_delete' article.id %}" 
+                            method="POST"
+                            >
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div>
+                    浏览：{{ article.total_views }}
+                </div>
             </div>
-            <div>
-                浏览：{{ article.total_views }}
+            <!-- 文章正文 -->
+            <div class="col-12">
+                <!--  在 article.body 后加上 |safe 过滤器,（由于用了MARKDOWN，防止Django对文本进行转义）-->
+                <p>{{ article.body|safe }}</p>
             </div>
         </div>
-        <!-- 文章正文 -->
-        <div class="col-12">
-            <!--  在 article.body 后加上 |safe 过滤器,（由于用了MARKDOWN，防止Django对文本进行转义）-->
-            <p>{{ article.body|safe }}</p>
+
+        <div clas="col-3 mt-4">
+            <h4><strong>目录</strong></h4>
+            <hr>
+            <div>
+                {{ toc|safe }}
+            </div>     
         </div>
     </div>
 </div>
