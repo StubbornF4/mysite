@@ -24,6 +24,7 @@ urlpatterns = [
     path('article/',include('article.urls')),
     path('userprofile/', include('userprofile.urls', namespace='userprofile')),
     path('password-reset/',include('password_reset.urls')),
+    path('comment/',include('comment.urls', namespace='comment')),
 ]
 
 #没看懂

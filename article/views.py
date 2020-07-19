@@ -12,6 +12,7 @@ from django.core.paginator import Paginator
 import markdown
 #引入Q对象，用于联合查询
 from django.db.models import Q
+from comment.models import Comment
 
 #文章列表
 def article_list(request):
@@ -40,7 +41,7 @@ def article_list(request):
             article_list = ArticlePost.objects.all()
 
 
-    paginator = Paginator(article_list,1)
+    paginator = Paginator(article_list,2)
     page = request.GET.get('page')
     articles = paginator.get_page(page)
 
@@ -51,6 +52,8 @@ def article_list(request):
 #文章详情
 def article_detail(request,id):
     article = ArticlePost.objects.get(id=id)
+    comments = Comment.objects.filter(article=id)
+
     #浏览量控制
     article.total_views += 1
     article.save(update_fields=['total_views'])
@@ -67,7 +70,7 @@ def article_detail(request,id):
     )
     article.body = md.convert(article.body)
 
-    context = {'article': article, 'toc': md.toc }
+    context = {'article': article, 'toc': md.toc, 'comments': comments, }
 
     return render(request,'article/detail.html',context)
 
