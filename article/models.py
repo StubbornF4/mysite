@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 # timezone 用于处理时间相关事务。
 from django.utils import timezone
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 class ArticleColumn(models.Model):
     title = models.CharField(max_length=100, blank=True)
@@ -29,6 +30,7 @@ class ArticlePost(models.Model):
         on_delete=models.CASCADE,
         related_name='article'
     )
+    tags = TaggableManager(blank=True)
 
 
     #内部类 Class Meta用于给model 定义元数据
