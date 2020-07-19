@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse 
-from .models import ArticlePost
+from .models import ArticlePost, ArticleColumn
 from .forms import ArticlePostForm
 from django.contrib.auth.decorators import login_required
 
@@ -41,7 +41,7 @@ def article_list(request):
             article_list = ArticlePost.objects.all()
 
 
-    paginator = Paginator(article_list,2)
+    paginator = Paginator(article_list,3)
     page = request.GET.get('page')
     articles = paginator.get_page(page)
 
@@ -81,13 +81,17 @@ def article_create(request):
         if article_post_form.is_valid():
             new_article = article_post_form.save(commit=False)
             new_article.author = User.objects.get(id=request.user.id)
+            if request.POST['column']!='none':
+                new_article.column = ArticleColumn.objects.get(id=request.POST['column'])
             new_article.save()
             return redirect('article:article_list')
         else:
             return HttpResponse("表单内容有误，请重新填写。")
     else:
         article_post_form = ArticlePostForm()
-        return render(request,'article/create.html',{ 'article_post_form': article_post_form })
+        columns = ArticleColumn.objects.all()
+        context={'article_post_form': article_post_form,'columns': columns}
+        return render(request,'article/create.html',context)
 
 @login_required(login_url='/userprofile/login/')
 def article_safe_delete(request, id):
@@ -111,10 +115,20 @@ def article_update(request, id):
         if article_post_form.is_valid():
             article.title = request.POST['title']
             article.body = request.POST['body']
+            if request.POST['column'] != 'none':
+                article.column = ArticleColumn.objects.get(id=request.POST['column'])
+            else:
+                article.column = None
             article.save()
             return redirect("article:article_detail",id=id)
         else:
             return HttpResponse("表单内容有误，请重新填写")
     else:
         article_post_form = ArticlePostForm()
-        return render(request, 'article/update.html', { 'article': article, 'article_post_form': article_post_form })
+        columns = ArticleColumn.objects.all()
+        context = {
+            'article': article, 
+            'article_post_form': article_post_form,
+            'columns': columns
+        }
+        return render(request, 'article/update.html', context)
