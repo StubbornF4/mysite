@@ -57,8 +57,18 @@
     <!-- 列表循环 -->
     <div class="row mt-2">
         {% for article in articles %}
+            <!-- 标题图 -->
+            {% if article.avatar %}
+                <div class="col-3">
+                    <img src="{{ article.avatar.url }}" 
+                        alt="avatar" 
+                        style="max-width:100%; border-radius: 20px"
+                    >
+                </div>
+            {% endif %}
+
             <!-- 文章内容 -->
-            <div class="col-12">
+            <div class="col">
                 <!-- 栏目 -->
                 {% if article.column %}
                     <button type="button" 
@@ -114,8 +124,8 @@
                         {{ article.updated|date:'Y-m-d' }} 更新
                     </span>
                 </p>
-                <hr>
             </div>
+            <hr style='width: 100%;'/>
         {% endfor %}
     </div>
     

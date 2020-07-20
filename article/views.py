@@ -79,7 +79,7 @@ def article_detail(request,id):
 
 def article_create(request):
     if request.method == "POST":
-        article_post_form = ArticlePostForm(data=request.POST)
+        article_post_form = ArticlePostForm(request.POST,request.FILES)
         #判断数据是否满足模型要求（Django内置方法）
         if article_post_form.is_valid():
             new_article = article_post_form.save(commit=False)
