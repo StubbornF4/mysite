@@ -124,6 +124,9 @@ def article_update(request, id):
                 article.column = ArticleColumn.objects.get(id=request.POST['column'])
             else:
                 article.column = None
+            if request.FILES.get('avatar'):
+                article.avatar = request.FILES.get('avatar')
+            article.tags.set(*request.POST.get('tags').split(','),clear=True)
             article.save()
             return redirect("article:article_detail",id=id)
         else:
@@ -134,6 +137,7 @@ def article_update(request, id):
         context = {
             'article': article, 
             'article_post_form': article_post_form,
-            'columns': columns
+            'columns': columns,
+            'tags': ','.join([x for x in article.tags.names()]),
         }
         return render(request, 'article/update.html', context)
