@@ -13,6 +13,7 @@ import markdown
 #引入Q对象，用于联合查询
 from django.db.models import Q
 from comment.models import Comment
+from comment.forms import CommentForm
 
 #文章列表
 def article_list(request):
@@ -72,8 +73,16 @@ def article_detail(request,id):
         ]
     )
     article.body = md.convert(article.body)
+    
+    comment_form = CommentForm()
 
-    context = {'article': article, 'toc': md.toc, 'comments': comments, }
+    context={
+        'article': article, 
+        'toc': md.toc, 
+        'comments': comments,
+        'comment_form': comment_form,  
+    }
+
 
     return render(request,'article/detail.html',context)
 
