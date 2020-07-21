@@ -85,6 +85,7 @@
                         {{ article.column }}
                     </button>
                 {% endif %}
+
                 <!-- 标签 -->
                 <span>
                     {% for tag in article.tags.all %}
@@ -95,6 +96,7 @@
                         </a>
                     {% endfor %}
                 </span>
+
                 <!-- 标题 -->
                 <h4>
                     <b>
@@ -114,14 +116,14 @@
                 <!-- 注脚 -->
                 <p>
                     <!-- 附加信息 -->
-                    <span style="color: green;">
-                        {{ article.total_views }} 浏览&nbsp;&nbsp;&nbsp;
+                    <span class="iconfont icon-eye" style="color:	#101010;"></span>
+                    <span>
+                        {{ article.total_views }} &nbsp;&nbsp;&nbsp;
                     </span>
-                    <span style="color: blue;">
+
+                    <span class="iconfont icon-time" style="color:	#101010"></span>
+                    <span>
                         {{ article.created|date:'Y-m-d' }} 发布&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <span style="color: darkred;">
-                        {{ article.updated|date:'Y-m-d' }} 更新
                     </span>
                 </p>
             </div>

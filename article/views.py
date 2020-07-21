@@ -34,8 +34,10 @@ def article_list(request):
     #column.isdigit()是什么意思
     if column is not None and column.isdigit():
         article_list = article_list.filter(column=column)
+
     if tag and tag != 'None':
         article_list = article_list.filter(tags__name__in=[tag])
+
     if order == 'total_views':
         article_list =  article_list.order_by('-total_views')
 
@@ -135,7 +137,8 @@ def article_update(request, id):
                 article.column = None
             if request.FILES.get('avatar'):
                 article.avatar = request.FILES.get('avatar')
-            article.tags.set(*request.POST.get('tags').split(','),clear=True)
+            if request.POST['tags']:
+                article.tags.set(*request.POST.get('tags').split(','), clear=True)
             article.save()
             return redirect("article:article_detail",id=id)
         else:
