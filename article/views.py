@@ -31,7 +31,7 @@ def article_list(request):
         )
     else:
         search=''
-    #column.isdigit()是什么意思
+        
     if column is not None and column.isdigit():
         article_list = article_list.filter(column=column)
 

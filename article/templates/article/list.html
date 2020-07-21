@@ -71,19 +71,18 @@
             <div class="col">
                 <!-- 栏目 -->
                 {% if article.column %}
-                    <button type="button" 
-                        class="btn btn-sm mb-2
+                        <a type="button" href="{% url 'article:article_list' %}?column={{ article.column.id }}"
+                            class="btn btn-sm mb-2 
                             {% if article.column.title == 'python' %}
                                 btn-success
                             {% elif article.column.title == '云顶之弈' %}
                                 btn-danger
                             {% elif article.column.title == '感想' %}
                                 btn-warning
-                            {% endif %}
-                        "
-                    >
-                        {{ article.column }}
-                    </button>
+                            {% endif %}"
+                        >
+                            {{ article.column }}
+                        </a>
                 {% endif %}
 
                 <!-- 标签 -->
