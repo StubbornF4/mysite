@@ -1,5 +1,5 @@
 from django.db import models
-# 导入内建的User模型。
+# 导入内建的User模型。08/15
 from django.contrib.auth.models import User
 # timezone 用于处理时间相关事务。
 from django.utils import timezone
